@@ -22,7 +22,7 @@ export default function ExportPanel({
 
   const handleExport = useCallback(async () => {
     if (!markdown.trim()) {
-      setError("No content to export. Write or upload markdown first.");
+      setError("没有可导出的内容，请先编写或上传 Markdown。");
       return;
     }
 
@@ -37,7 +37,7 @@ export default function ExportPanel({
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Conversion failed" }));
+        const err = await res.json().catch(() => ({ error: "转换失败" }));
         throw new Error(err.error ?? `Server error: ${res.status}`);
       }
 
@@ -48,7 +48,7 @@ export default function ExportPanel({
       triggerDownload(blob, docxName);
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Unknown export error";
+        err instanceof Error ? err.message : "导出失败，未知错误";
       console.error("Export failed:", err);
       setError(message);
     } finally {
@@ -74,7 +74,7 @@ export default function ExportPanel({
         {/* Font */}
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Font
+            字体
           </label>
           <select
             value={style.fontFamily}
@@ -95,7 +95,7 @@ export default function ExportPanel({
         {/* H1 Color */}
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            H1 Color
+            H1 颜色
           </label>
           <input
             type="color"
@@ -110,7 +110,7 @@ export default function ExportPanel({
         {/* H2 Color */}
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            H2 Color
+            H2 颜色
           </label>
           <input
             type="color"
@@ -125,7 +125,7 @@ export default function ExportPanel({
         {/* Orientation */}
         <div className="flex items-center gap-2">
           <label className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Orientation
+            页面方向
           </label>
           <select
             value={style.pageOrientation}
@@ -137,15 +137,15 @@ export default function ExportPanel({
             }
             className="rounded-md border border-zinc-300 bg-white px-2 py-1 text-sm text-zinc-700 outline-none transition-colors focus:border-blue-400 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200"
           >
-            <option value="PORTRAIT">Portrait</option>
-            <option value="LANDSCAPE">Landscape</option>
+            <option value="PORTRAIT">纵向</option>
+            <option value="LANDSCAPE">横向</option>
           </select>
         </div>
 
         {/* Export */}
         <div className="ml-auto flex items-center gap-3">
           <span className="text-xs text-zinc-400 dark:text-zinc-500">
-            {formatSize(contentSize)} · server
+            {formatSize(contentSize)} · 服务端转换
           </span>
           <button
             type="button"
@@ -174,7 +174,7 @@ export default function ExportPanel({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                Exporting...
+                导出中...
               </>
             ) : (
               <>
@@ -191,7 +191,7 @@ export default function ExportPanel({
                     d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                Export DOCX
+                导出 DOCX
               </>
             )}
           </button>

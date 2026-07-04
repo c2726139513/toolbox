@@ -123,7 +123,7 @@ export default function MarkdownEditor({
                 d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
               />
             </svg>
-            Upload .md
+            上传 .md
           </button>
           <input
             ref={fileInputRef}
@@ -137,15 +137,15 @@ export default function MarkdownEditor({
 
         <div className="flex items-center gap-2">
           <span className="text-xs text-zinc-400 dark:text-zinc-500">
-            {lineCount} lines
+            {lineCount} 行
           </span>
           <span className="text-xs text-zinc-300 dark:text-zinc-600">|</span>
           <span className="text-xs text-zinc-400 dark:text-zinc-500">
-            {wordCount} words
+            {wordCount} 词
           </span>
           <span className="text-xs text-zinc-300 dark:text-zinc-600">|</span>
           <span className="text-xs text-zinc-400 dark:text-zinc-500">
-            {charCount} chars
+            {charCount} 字符
           </span>
           <span className="text-xs text-zinc-300 dark:text-zinc-600">|</span>
           <button
@@ -157,7 +157,7 @@ export default function MarkdownEditor({
                 : "text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             }`}
           >
-            Preview
+            预览
           </button>
         </div>
       </div>
@@ -188,7 +188,7 @@ export default function MarkdownEditor({
                 />
               </svg>
               <p className="text-base font-medium text-blue-600 dark:text-blue-400">
-                Release to import .md file
+                松开导入 .md 文件
               </p>
             </div>
           </div>
@@ -198,7 +198,7 @@ export default function MarkdownEditor({
         <textarea
           value={value}
           onChange={handleTextChange}
-          placeholder="Type or paste your Markdown here..."
+          placeholder="在此输入或粘贴 Markdown..."
           className="flex-1 resize-none border-0 bg-transparent p-4 font-mono text-sm leading-relaxed text-zinc-800 outline-none placeholder:text-zinc-300 dark:text-zinc-200 dark:placeholder:text-zinc-600"
           spellCheck={false}
         />
@@ -215,7 +215,7 @@ export default function MarkdownEditor({
             ) : (
               <div className="flex h-full items-center justify-center">
                 <p className="text-sm text-zinc-400 dark:text-zinc-500">
-                  Preview will appear here
+                  预览将显示在此处
                 </p>
               </div>
             )}
