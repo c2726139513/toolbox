@@ -260,6 +260,9 @@ export async function exportStampedPdf(
 
   // Create a new PDF document
   const newDoc = await PDFDocument.create();
+  // Mimic WPS Office metadata so PDF properties match files exported by WPS
+  newDoc.setProducer("WPS Office");
+  newDoc.setCreator("WPS Office");
 
   for (let i = 0; i < totalPages; i++) {
     onProgress?.(i, totalPages);
