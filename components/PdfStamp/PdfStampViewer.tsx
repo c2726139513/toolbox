@@ -14,7 +14,7 @@ interface PdfStampViewerProps {
   stampWidth: number;
   onAddStamp: (placement: Omit<StampPlacement, "id">) => void;
   onMoveStamp?: (id: string, x: number, y: number) => void;
-  onPdfMeta: (width: number, height: number) => void;
+  onPdfMeta: (pageIndex: number, width: number, height: number) => void;
 }
 
 const PREVIEW_SCALE = 1.5;
@@ -93,7 +93,7 @@ export default function PdfStampViewer({
         const v1 = p1.getViewport({ scale: PREVIEW_SCALE });
         if (!dead) {
           setDims({ w: v1.width, h: v1.height });
-          onPdfMeta(v1.width / PREVIEW_SCALE, v1.height / PREVIEW_SCALE);
+          onPdfMeta(0, v1.width / PREVIEW_SCALE, v1.height / PREVIEW_SCALE);
         }
         for (let i = 0; i < n; i++) {
           if (dead) return;
@@ -104,6 +104,7 @@ export default function PdfStampViewer({
           c.height = vp.height;
           await p.render({ canvasContext: c.getContext("2d")!, canvas: c, viewport: vp }).promise;
           baseCache.current.set(i, c);
+          if (!dead) onPdfMeta(i, vp.width / PREVIEW_SCALE, vp.height / PREVIEW_SCALE);
         }
         if (!dead) setReady(true);
       } catch (e) {
@@ -115,6 +116,14 @@ export default function PdfStampViewer({
     if (pdfBytes) load(pdfBytes);
     return () => { dead = true; };
   }, [pdfBytes, onPdfMeta]);
+
+  // ---------- Update preview aspect ratio when page changes ----------
+  useEffect(() => {
+    if (!ready) return;
+    const base = baseCache.current.get(currentPage);
+    if (!base) return;
+    setDims({ w: base.width, h: base.height });
+  }, [currentPage, ready]);
 
   // ---------- Composite (rebuilds when page/placements/ready/ver changes) ----------
   const doComposite = useRef<() => void>(() => {});

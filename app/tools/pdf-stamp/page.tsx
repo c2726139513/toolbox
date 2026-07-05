@@ -10,7 +10,7 @@ import {
   generateStampId,
   PDF_SIZE_THRESHOLDS,
 } from "@/lib/pdf-stamp";
-import type { StampPlacement } from "@/lib/pdf-stamp";
+import type { StampPlacement, PageDimensions } from "@/lib/pdf-stamp";
 
 export default function PdfStampPage() {
   // ---- State ----
@@ -27,7 +27,7 @@ export default function PdfStampPage() {
   const [isExporting, setIsExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewerDragOver, setViewerDragOver] = useState(false);
-  const pdfDimsRef = useRef({ width: 0, height: 0 });
+  const pdfDimsRef = useRef<Map<number, PageDimensions>>(new Map());
 
   // ---- Shared: read file to bytes ----
   const readPdfFile = useCallback(async (file: File) => {
@@ -89,8 +89,8 @@ export default function PdfStampPage() {
     setPlacements([]);
   }, []);
 
-  const handlePdfMeta = useCallback((width: number, height: number) => {
-    pdfDimsRef.current = { width, height };
+  const handlePdfMeta = useCallback((pageIndex: number, width: number, height: number) => {
+    pdfDimsRef.current.set(pageIndex, { width, height });
   }, []);
 
   const handleMoveStamp = useCallback((id: string, x: number, y: number) => {
@@ -109,19 +109,23 @@ export default function PdfStampPage() {
         overlapRatio: 0.05,
       });
 
-      const { width: pw, height: ph } = pdfDimsRef.current;
       const pos = ridingSeamPosition / 100; // 0–1
 
-      const newPlacements: StampPlacement[] = slices.map((slice) => ({
-        id: generateStampId(),
-        pageIndex: slice.pageIndex,
-        x: pw - slice.width,
-        y: (ph - slice.height) * pos,
-        width: slice.width,
-        height: slice.height,
-        rotation: 0,
-        imageData: slice.sliceData,
-      }));
+      const newPlacements: StampPlacement[] = slices.map((slice) => {
+        const dims = pdfDimsRef.current.get(slice.pageIndex);
+        const pw = dims?.width ?? 0;
+        const ph = dims?.height ?? 0;
+        return {
+          id: generateStampId(),
+          pageIndex: slice.pageIndex,
+          x: pw - slice.width,
+          y: (ph - slice.height) * pos,
+          width: slice.width,
+          height: slice.height,
+          rotation: 0,
+          imageData: slice.sliceData,
+        };
+      });
 
       setPlacements((prev) => [...prev, ...newPlacements]);
     } catch (err) {

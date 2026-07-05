@@ -18,6 +18,9 @@ import { PDFDocument } from "pdf-lib";
 // Types
 // ---------------------------------------------------------------------------
 
+/** Per-page dimensions in PDF points */
+export type PageDimensions = { width: number; height: number };
+
 export interface StampPlacement {
   /** Unique id for this placement (for React key and drag targeting) */
   id: string;
@@ -278,9 +281,16 @@ export async function exportStampedPdf(
       );
     });
 
-    // Get original page dimensions (in points)
+    // Get original page dimensions, accounting for rotation
     const srcPage = srcDoc.getPage(i);
-    const { width: pageW, height: pageH } = srcPage.getSize();
+    let { width: pageW, height: pageH } = srcPage.getSize();
+    const rotation = srcPage.getRotation().angle;
+    // If page is rotated 90° or 270° (landscape), swap dimensions so the
+    // new page respects the visual orientation. pdfjs already rendered with
+    // rotation applied, so the canvas matches the swapped dimensions.
+    if (rotation === 90 || rotation === 270) {
+      [pageW, pageH] = [pageH, pageW];
+    }
 
     // 4. Embed into new PDF
     const jpgBytes = new Uint8Array(await blob.arrayBuffer());
